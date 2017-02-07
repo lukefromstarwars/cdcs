@@ -196,31 +196,31 @@ def detailed_institutions_as_pickle():
 
 	# split agreement
 	split_str = '\\r\\n'
-	df_agreement = df[DV.agrement].str.split(split_str).apply(pd.Series, 1).stack()
-	df_agreement.dropna()
-	df_agreement.index = df_agreement.index.droplevel(-1)
-	df_agreement = DataFrame(df_agreement, columns=[DV.agrement])
+	agreements = df[DV.agrement].str.split(split_str).apply(pd.Series, 1).stack()
+	agreements = agreements.dropna()
+	agreements.index = agreements.index.droplevel(-1)
+	df_agreements = DataFrame(agreements, columns=[DV.agrement])
 
-	get_unique_rows([DV.agrement], df_agreement)
+	get_unique_rows([DV.agrement], df_agreements)
 
-	print_full(df_agreement)
+	print_full(df_agreements)
 
 	# split agreement from organization
 	split_str = ' - '
-	df_agreement_with_orgs = df_agreement[DV.agrement].str.split(split_str).apply(pd.Series, 1)
-	df_agreement_with_orgs.dropna(how='all')
-	df_agreement_with_orgs.columns = [DV.agrement, DV.agrement_organisation]
-	get_unique_rows([DV.agrement_organisation, DV.agrement], df_agreement_with_orgs)
-	agreement_orgs = get_unique_rows([DV.agrement_organisation], df_agreement_with_orgs)
+	df_agreements = df_agreements[DV.agrement].str.split(split_str).apply(pd.Series, 1)
+	df_agreements.dropna(how='all')
+	df_agreements.columns = [DV.agrement, DV.agrement_organisation]
+	df_agreements[DV.agrement_organisation] = df_agreements[DV.agrement_organisation].str.strip()
+	get_unique_rows([DV.agrement_organisation, DV.agrement], df_agreements)
 
 	# rename cols
-
 	old_strs = [
 		'Cfl',
-		'C.flamande',
-		'C.fla.',
+		'C. flamande',
+		'C. fla.',
 		'Cfl',
-		'Comm.flamande',
+		'Comm. flamande',
+		'Com. flam.',
 		'K&G',
 		'RBC',
 		'AUTORITÉ FÉDÉRALE'
@@ -232,16 +232,18 @@ def detailed_institutions_as_pickle():
 		'Communauté flamande',
 		'Communauté flamande',
 		'Communauté flamande',
+		'Communauté flamande',
 		'Kind en Gezin',
 		'Région Bruxelles-Capitale',
 		'Fédéral'
 	]
 
+	# df_agreements = df_agreements.replace(old_strs, new_strs)
 	for o, n in zip(old_strs, new_strs):
 		print(o, n)
-		df_agreement_with_orgs[DV.agrement_organisation] = df_agreement_with_orgs[DV.agrement_organisation].str.replace(o, n)
+		df_agreements[DV.agrement_organisation] = df_agreements[DV.agrement_organisation].str.replace(o, n)
 
-	df_agreement_with_orgs.replace(old_strs, new_strs, inplace=True)
+		agreement_orgs = get_unique_rows([DV.agrement_organisation], df_agreements)
 
 	save_as_xlsx(agreement_orgs, 'Agreement_orgs')
 
