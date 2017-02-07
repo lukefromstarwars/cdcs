@@ -253,5 +253,4 @@ def get_assuetudes():
 	del df_pivot[DV.subject_id]
 
 	df_pivot.stack()
-	print("this is a github testing change")
 	save_as_xlsx(df_pivot, 'Institutions_tox')
