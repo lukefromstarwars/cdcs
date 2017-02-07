@@ -20,6 +20,7 @@ from sklearn.preprocessing import PolynomialFeatures
 
 pd.set_option('display.max_rows', 20)
 pd.set_option('display.width', 180)
+pd.set_option('max_colwidth', 180)
 desired_width = 320
 pd.set_option('display.width', desired_width)
 
